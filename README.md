@@ -8,54 +8,54 @@ devtools::install_github("zwang400/FMMcsVS")
 library(FMMcsVS)
 
 ## generate simulation data
-### independent covariates with default parameter values
+#### independent covariates with default parameter values
 sim_data_1 <- data_gen_func()
 
-### for D=6, M=3, bloacked-wise correlation among X1-X2, X3-X4, X5-X6, correation of 0.2,0.3,0.4
+#### for D=6, M=3, bloacked-wise correlation among X1-X2, X3-X4, X5-X6, correation of 0.2,0.3,0.4
 sim_data_2 <- data_gen_func(rho=c(0.2, 0.3, 0.4))
 
-### correlated covariates with pre-specified covariance matrix
+#### correlated covariates with pre-specified covariance matrix
 sim_data_3 <- data_gen_func(cor_mtx = matrix(0.8, 6, 6))
 
-### generate data for split model, independent covariates (W)
+##### generate data for split model, independent covariates (W)
 sim_data_split_1 <- data_gen_split()
 
-### data for split model, pair-wise correlation of 0.5 among W
+#### data for split model, pair-wise correlation of 0.5 among W
 sim_data_split_2 <- data_gen_split(rho=0.5)
 
 ## run MCMC simulations
 
-### FDMM with fixed \gamma=1, with VS
+#### FDMM with fixed \gamma=1, with VS
 sim_fdmm_1 <- simulation_func(sim_data_1$X, sim_data_1$y, gamma_hyperprior=F, gamma_fixed=1)
 
-### FBMM without VS, b_bel with hyperprior
+#### FBMM without VS, b_bel with hyperprior
 sim_fbmm_1 <- simulation_func(sim_data_1$X, sim_data_1$y, prior="Bessel")
 
-### Dynamic FDMM with VS
+#### Dynamic FDMM with VS
 sim_dyn_fdmm_1 <- simulation_func(sim_data_1$X, sim_data_1$y, prior="Dynamic_FDMM")
 
-### FUMM with S~Unif(0.2, 1)
+#### FUMM with S~Unif(0.2, 1)
 sim_fumm_1 <- simulation_func(sim_data_1$X, sim_data_1$y, prior="Uniform", a_unif=0.2)
 
-### split model with FBMM with VS
+#### split model with FBMM with VS
 sim_split_fbmm_1 <- simulation_split(sim_data_split_1$W, sim_data_split_1$Z, sim_data_split_1$y, prior="Bessel")
 
-### RPMS (DPM) with VS
+#### RPMS (DPM) with VS
 sim_rpms_1 <- simulation_func_rpms(sim_data_1$X, sim_data_1$y)
 
 ## posterior inference
 calculate ARI, MSE, VS errors
 
-### FBMM 
+#### FBMM 
 post_inf_fbmm_1 <- post_inf(sim_res=sim_fbmm_1, data=sim_data_1)
 
-### RPMS
+#### RPMS
 post_rpms_1 <- post_inf_rpms(sim_res=sim_rpms_1, data=sim_data_1)
 
 ## real data analysis
 For country, coffee, flea data, datasets been loaded automatically after loading the package, no need to use data(...)
 
-### for coffee data
+#### for coffee data
 X <- coffee[, -c(1,2,10)]
 y <- coffee[,10]
 variety.coffee <- coffee[,1]
@@ -106,7 +106,7 @@ X_test_sel <- X_select[test.indx, ]
 X_test <- as.matrix(sweep(sweep(X_test_sel, 2, center.x.train), 2, scale.x.train, FUN = "/"))
 y_test <- y[test.indx]
 
-### run simulation with training data
+## run simulation with training data
 coffee.fbmm.train <- simulation_func(X_train, y_train, prior = "Bessel", M_init = 12, Lambda = 7, a_alpha = 5)
 coffee.fbmm.train.nss <- simulation_func(X_train, y_train, prior = "Bessel", M_init = 12, Lambda = 7, a_alpha = 5, SS = F)
 coffee.fdmm.train <- simulation_func(X_train, y_train, M_init = 12, Lambda = 7, a_alpha = 5)
